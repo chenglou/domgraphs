@@ -45,9 +45,6 @@ function lcm_float(m, n) {
 
 function plot(formula1, formula2, plotAs) {
   var element = document.getElementById("canvas");
-  if (element == null) {
-    return ;
-  }
   var context = element.getContext("2d");
   var width = element.width;
   var height = element.height;

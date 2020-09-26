@@ -8,6 +8,7 @@ module C2d = Webapi.Canvas.Canvas2d
 
 @bs.val external setTimeoutFloat: ('a => unit, float, 'a) => int = "setTimeout"
 @bs.val external requestAnimationFrame: ('a => unit) => unit = "requestAnimationFrame"
+@bs.val external document: {..} = "document"
 
 type polar = (float, float) // (radius, theta)
 type cartesian = (float, float) // (0.0, 0.0) is at center
@@ -44,78 +45,71 @@ let plot = (
   formula2: DomGraphs.formula,
   plotAs: DomGraphs.graphType,
 ): unit => {
-  switch Doc.getElementById("canvas", DOM.document) {
-  | Some(element) => {
-      let context = CanvasElement.getContext2d(element)
-      let width = float_of_int(CanvasElement.width(element))
-      let height = float_of_int(CanvasElement.height(element))
-      let centerX = width /. 2.0
-      let centerY = height /. 2.0
+  let element = document["getElementById"]("canvas")
+  let context = CanvasElement.getContext2d(element)
+  let width = float_of_int(CanvasElement.width(element))
+  let height = float_of_int(CanvasElement.height(element))
+  let centerX = width /. 2.0
+  let centerY = height /. 2.0
 
-      C2d.setFillStyle(context, String, "white")
-      C2d.fillRect(~x=0.0, ~y=0.0, ~w=width, ~h=height, context)
+  C2d.setFillStyle(context, String, "white")
+  C2d.fillRect(~x=0.0, ~y=0.0, ~w=width, ~h=height, context)
 
-      let amplitude = Js.Math.max_float(
-        1.0,
-        abs_float(formula1.factor) +. abs_float(formula2.factor),
-      )
+  let amplitude = Js.Math.max_float(1.0, abs_float(formula1.factor) +. abs_float(formula2.factor))
 
-      let toCanvas = ((x, y): cartesian): cartesian => {
-        (centerX /. amplitude *. x +. centerX, -.centerY /. amplitude *. y +. centerY)
-      }
-
-      let evaluate = (f: DomGraphs.formula, angle: float): float => {
-        f.factor *. f.fcn(f.theta *. radians(angle) +. radians(f.offset))
-      }
-
-      let getPolar = (theta): cartesian => {
-        let r1 = evaluate(formula1, theta)
-        let r2 = evaluate(formula2, theta)
-        toCartesian((r1 +. r2, theta))
-      }
-
-      let getLissajous = (theta): cartesian => {
-        let r1 = evaluate(formula1, theta)
-        let r2 = evaluate(formula2, theta)
-        (r1, r2)
-      }
-
-      let drawLines = (getXY: float => cartesian): unit => {
-        let increment = 3.0
-        let limit = 360.0 *. lcm_float(formula1.theta, formula2.theta)
-        let rec helper = (d: float) => {
-          if d >= limit {
-            ()
-          } else {
-            let (x, y) = toCanvas(getXY(d))
-            C2d.lineTo(~x, ~y, context)
-            helper(d +. increment)
-          }
-        }
-        let (x, y) = toCanvas(getXY(0.0))
-        C2d.setStrokeStyle(context, String, "#000")
-        C2d.beginPath(context)
-        C2d.moveTo(context, ~x, ~y)
-        helper(increment)
-        C2d.closePath(context)
-        C2d.stroke(context)
-      }
-
-      // draw axes
-      C2d.setStrokeStyle(context, String, "#999")
-      C2d.beginPath(context)
-      C2d.moveTo(context, ~x=0.0, ~y=centerY)
-      C2d.lineTo(context, ~x=width, ~y=centerY)
-      C2d.moveTo(context, ~x=centerX, ~y=0.0)
-      C2d.lineTo(context, ~x=centerX, ~y=height)
-      C2d.closePath(context)
-      C2d.stroke(context)
-
-      // draw the plot lines
-      drawLines(plotAs == Polar ? getPolar : getLissajous)
-    }
-  | None => ()
+  let toCanvas = ((x, y): cartesian): cartesian => {
+    (centerX /. amplitude *. x +. centerX, -.centerY /. amplitude *. y +. centerY)
   }
+
+  let evaluate = (f: DomGraphs.formula, angle: float): float => {
+    f.factor *. f.fcn(f.theta *. radians(angle) +. radians(f.offset))
+  }
+
+  let getPolar = (theta): cartesian => {
+    let r1 = evaluate(formula1, theta)
+    let r2 = evaluate(formula2, theta)
+    toCartesian((r1 +. r2, theta))
+  }
+
+  let getLissajous = (theta): cartesian => {
+    let r1 = evaluate(formula1, theta)
+    let r2 = evaluate(formula2, theta)
+    (r1, r2)
+  }
+
+  let drawLines = (getXY: float => cartesian): unit => {
+    let increment = 3.0
+    let limit = 360.0 *. lcm_float(formula1.theta, formula2.theta)
+    let rec helper = (d: float) => {
+      if d >= limit {
+        ()
+      } else {
+        let (x, y) = toCanvas(getXY(d))
+        C2d.lineTo(~x, ~y, context)
+        helper(d +. increment)
+      }
+    }
+    let (x, y) = toCanvas(getXY(0.0))
+    C2d.setStrokeStyle(context, String, "#000")
+    C2d.beginPath(context)
+    C2d.moveTo(context, ~x, ~y)
+    helper(increment)
+    C2d.closePath(context)
+    C2d.stroke(context)
+  }
+
+  // draw axes
+  C2d.setStrokeStyle(context, String, "#999")
+  C2d.beginPath(context)
+  C2d.moveTo(context, ~x=0.0, ~y=centerY)
+  C2d.lineTo(context, ~x=width, ~y=centerY)
+  C2d.moveTo(context, ~x=centerX, ~y=0.0)
+  C2d.lineTo(context, ~x=centerX, ~y=height)
+  C2d.closePath(context)
+  C2d.stroke(context)
+
+  // draw the plot lines
+  drawLines(plotAs == Polar ? getPolar : getLissajous)
 }
 
 let rec draw = _evt => {
