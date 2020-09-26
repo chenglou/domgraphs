@@ -16,7 +16,5 @@
     "bs-platform": "^8.2.0",
     "cssnano": "^4.1.10"
   },
-  "dependencies": {
-    "bs-webapi": "^0.19.1"
-  }
+  "dependencies": {}
 }

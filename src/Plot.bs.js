@@ -3,7 +3,6 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var DomGraphs$Domgraphs = require("./DomGraphs.bs.js");
-var Webapi__Canvas__Canvas2d = require("bs-webapi/src/Webapi/Canvas/Webapi__Canvas__Canvas2d.js");
 
 function toRadians(degrees) {
   return degrees * Math.PI / 180.0;
@@ -45,7 +44,7 @@ function plot(formula1, formula2, plotAs) {
   var height = element.height;
   var centerX = width / 2.0;
   var centerY = height / 2.0;
-  Webapi__Canvas__Canvas2d.setFillStyle(context, /* String */0, "white");
+  context.fillStyle = "white";
   context.fillRect(0.0, 0.0, width, height);
   var amplitude = Math.max(1.0, Math.abs(formula1.factor) + Math.abs(formula2.factor));
   var toCanvas = function (param) {
@@ -73,7 +72,7 @@ function plot(formula1, formula2, plotAs) {
             r2
           ];
   };
-  Webapi__Canvas__Canvas2d.setStrokeStyle(context, /* String */0, "#999");
+  context.strokeStyle = "#999";
   context.beginPath();
   context.moveTo(0.0, centerY);
   context.lineTo(width, centerY);
@@ -96,7 +95,7 @@ function plot(formula1, formula2, plotAs) {
     };
   };
   var match = toCanvas(Curry._1(getXY, 0.0));
-  Webapi__Canvas__Canvas2d.setStrokeStyle(context, /* String */0, "#000");
+  context.strokeStyle = "#000";
   context.beginPath();
   context.moveTo(match[0], match[1]);
   helper(3.0);
@@ -118,27 +117,6 @@ function draw(_evt) {
 
 draw(undefined);
 
-var DOM;
-
-var Doc;
-
-var Elem;
-
-var EvtTarget;
-
-var Canvas;
-
-var CanvasElement;
-
-var C2d;
-
-exports.DOM = DOM;
-exports.Doc = Doc;
-exports.Elem = Elem;
-exports.EvtTarget = EvtTarget;
-exports.Canvas = Canvas;
-exports.CanvasElement = CanvasElement;
-exports.C2d = C2d;
 exports.toRadians = toRadians;
 exports.toCartesian = toCartesian;
 exports.gcd = gcd;

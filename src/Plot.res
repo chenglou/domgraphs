@@ -1,11 +1,3 @@
-module DOM = Webapi.Dom
-module Doc = Webapi.Dom.Document
-module Elem = Webapi.Dom.Element
-module EvtTarget = Webapi.Dom.EventTarget
-module Canvas = Webapi.Canvas
-module CanvasElement = Webapi.Canvas.CanvasElement
-module C2d = Webapi.Canvas.Canvas2d
-
 @bs.val external requestAnimationFrame: ('a => unit) => unit = "requestAnimationFrame"
 @bs.val external document: {..} = "document"
 
@@ -47,7 +39,7 @@ let plot = (
   let centerX = width /. 2.0
   let centerY = height /. 2.0
 
-  C2d.setFillStyle(context, String, "white")
+  context["fillStyle"] = "white"
   context["fillRect"](~x=0.0, ~y=0.0, ~w=width, ~h=height)
 
   let amplitude = Js.Math.max_float(1.0, abs_float(formula1.factor) +. abs_float(formula2.factor))
@@ -85,7 +77,7 @@ let plot = (
       }
     }
     let (x, y) = toCanvas(getXY(0.0))
-    C2d.setStrokeStyle(context, String, "#000")
+    context["strokeStyle"] = "#000"
     context["beginPath"]()
     context["moveTo"](~x, ~y)
     helper(increment)
@@ -95,7 +87,7 @@ let plot = (
   }
 
   // draw axes
-  C2d.setStrokeStyle(context, String, "#999")
+  context["strokeStyle"] = "#999"
   context["beginPath"]()
   context["moveTo"](~x=0.0, ~y=centerY)
   context["lineTo"](~x=width, ~y=centerY)
