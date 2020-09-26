@@ -2,11 +2,10 @@
 'use strict';
 
 var Curry = require("bs-platform/lib/js/curry.js");
-var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var DomGraphs$Domgraphs = require("./DomGraphs.bs.js");
 var Webapi__Canvas__Canvas2d = require("bs-webapi/src/Webapi/Canvas/Webapi__Canvas__Canvas2d.js");
 
-function radians(degrees) {
+function toRadians(degrees) {
   return degrees * Math.PI / 180.0;
 }
 
@@ -14,8 +13,8 @@ function toCartesian(param) {
   var theta = param[1];
   var r = param[0];
   return [
-          r * Math.cos(radians(theta)),
-          r * Math.sin(radians(theta))
+          r * Math.cos(toRadians(theta)),
+          r * Math.sin(toRadians(theta))
         ];
 }
 
@@ -27,20 +26,16 @@ function gcd(_m, _n) {
       return m;
     }
     if (m > n) {
-      _m = m - n | 0;
+      _m = m - n;
       continue ;
     }
-    _n = n - m | 0;
+    _n = n - m;
     continue ;
   };
 }
 
 function lcm(m, n) {
-  return Caml_int32.div(Math.imul(m, n), gcd(m, n));
-}
-
-function lcm_float(m, n) {
-  return lcm(m * 100.0 | 0, n * 100.0 | 0) / 100.0;
+  return m * n / gcd(m, n);
 }
 
 function plot(formula1, formula2, plotAs) {
@@ -60,7 +55,7 @@ function plot(formula1, formula2, plotAs) {
           ];
   };
   var evaluate = function (f, angle) {
-    return f.factor * Curry._1(f.fcn, f.theta * radians(angle) + radians(f.offset));
+    return f.factor * Curry._1(f.fcn, f.theta * toRadians(angle) + toRadians(f.offset));
   };
   var getPolar = function (theta) {
     var r1 = evaluate(formula1, theta);
@@ -87,7 +82,7 @@ function plot(formula1, formula2, plotAs) {
   context.closePath();
   context.stroke();
   var getXY = plotAs === /* Polar */0 ? getPolar : getLissajous;
-  var limit = 360.0 * lcm_float(formula1.theta, formula2.theta);
+  var limit = 360.0 * lcm(formula1.theta, formula2.theta);
   var helper = function (_d) {
     while(true) {
       var d = _d;
@@ -144,11 +139,10 @@ exports.EvtTarget = EvtTarget;
 exports.Canvas = Canvas;
 exports.CanvasElement = CanvasElement;
 exports.C2d = C2d;
-exports.radians = radians;
+exports.toRadians = toRadians;
 exports.toCartesian = toCartesian;
 exports.gcd = gcd;
 exports.lcm = lcm;
-exports.lcm_float = lcm_float;
 exports.plot = plot;
 exports.draw = draw;
 /*  Not a pure module */

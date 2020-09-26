@@ -6,7 +6,6 @@ module Canvas = Webapi.Canvas
 module CanvasElement = Webapi.Canvas.CanvasElement
 module C2d = Webapi.Canvas.Canvas2d
 
-@bs.val external setTimeoutFloat: ('a => unit, float, 'a) => int = "setTimeout"
 @bs.val external requestAnimationFrame: ('a => unit) => unit = "requestAnimationFrame"
 @bs.val external document: {..} = "document"
 
@@ -14,30 +13,26 @@ type polar = (float, float) // (radius, theta)
 type cartesian = (float, float) // (0.0, 0.0) is at center
 type canvasCoord = (float, float) // (0.0, 0.0) is at top left
 
-let radians = (degrees: float): float => {
+let toRadians = (degrees: float): float => {
   degrees *. Js.Math._PI /. 180.0
 }
 
 let toCartesian = ((r, theta): polar): cartesian => {
-  (r *. cos(radians(theta)), r *. sin(radians(theta)))
+  (r *. cos(toRadians(theta)), r *. sin(toRadians(theta)))
 }
 
-let rec gcd = (m: int, n: int): int => {
-  if m == n {
+let rec gcd = (m, n) => {
+  if m === n {
     m
   } else if m > n {
-    gcd(m - n, n)
+    gcd(m -. n, n)
   } else {
-    gcd(m, n - m)
+    gcd(m, n -. m)
   }
 }
 
-let lcm = (m: int, n: int): int => {
-  m * n / gcd(m, n)
-}
-
-let lcm_float = (m: float, n: float): float => {
-  float_of_int(lcm(int_of_float(m *. 100.0), int_of_float(n *. 100.0))) /. 100.0
+let lcm = (m, n) => {
+  m *. n /. gcd(m, n)
 }
 
 let plot = (
@@ -62,7 +57,7 @@ let plot = (
   }
 
   let evaluate = (f: DomGraphs.formula, angle: float): float => {
-    f.factor *. f.fcn(f.theta *. radians(angle) +. radians(f.offset))
+    f.factor *. f.fcn(f.theta *. toRadians(angle) +. toRadians(f.offset))
   }
 
   let getPolar = (theta): cartesian => {
@@ -79,7 +74,7 @@ let plot = (
 
   let drawLines = (getXY: float => cartesian): unit => {
     let increment = 3.0
-    let limit = 360.0 *. lcm_float(formula1.theta, formula2.theta)
+    let limit = 360.0 *. lcm(formula1.theta, formula2.theta)
     let rec helper = (d: float) => {
       if d >= limit {
         ()
