@@ -3,23 +3,21 @@
 Example of using `bs-webapi` to access the DOM and draw polar
 graphs and Lissajous figures.
 
-# Build
+## Install
 
-```bash
-# for yarn
-yarn build
-
-# for npm
-npm run build
+```
+npm install
+npm install -g parcel-bundler
 ```
 
-# Build + Watch
+## Build
 
-```bash
-# for yarn
-yarn start
+`npm run build` to build once, `npm run start` to keep a build watcher running.
 
-# for npm
-npm run start
+`npm run bundle` to use Parcel to bundle the JS output.
+
+## See the Result
+
 ```
-
+open ./dist/index.html
+```
