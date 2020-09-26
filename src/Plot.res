@@ -1,5 +1,4 @@
 @bs.val external requestAnimationFrame: ('a => unit) => unit = "requestAnimationFrame"
-@bs.val external document: {..} = "document"
 
 type polar = {radius: float, theta: float}
 type cartesian = {cartesianX: float, cartesianY: float}
@@ -21,10 +20,9 @@ let lcm = (m, n) => {
   m *. n /. gcd(m, n)
 }
 
-let element = document["getElementById"]("canvas")
-let context = element["getContext"]("2d")
-let canvasWidth = Belt.Float.fromInt(element["width"])
-let canvasHeight = Belt.Float.fromInt(element["height"])
+let context = DomGraphs.canvas["getContext"]("2d")
+let canvasWidth = Belt.Float.fromInt(DomGraphs.canvas["width"])
+let canvasHeight = Belt.Float.fromInt(DomGraphs.canvas["height"])
 let centerX = canvasWidth /. 2.0
 let centerY = canvasHeight /. 2.0
 

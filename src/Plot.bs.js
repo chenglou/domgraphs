@@ -24,13 +24,11 @@ function lcm(m, n) {
   return m * n / gcd(m, n);
 }
 
-var element = document.getElementById("canvas");
+var context = DomGraphs$Domgraphs.canvas.getContext("2d");
 
-var context = element.getContext("2d");
+var canvasWidth = DomGraphs$Domgraphs.canvas.width;
 
-var canvasWidth = element.width;
-
-var canvasHeight = element.height;
+var canvasHeight = DomGraphs$Domgraphs.canvas.height;
 
 var centerX = canvasWidth / 2.0;
 
@@ -114,7 +112,6 @@ draw(undefined);
 
 exports.gcd = gcd;
 exports.lcm = lcm;
-exports.element = element;
 exports.context = context;
 exports.canvasWidth = canvasWidth;
 exports.canvasHeight = canvasHeight;
@@ -124,4 +121,4 @@ exports.toRadians = toRadians;
 exports.toCartesian = toCartesian;
 exports.toCanvas = toCanvas;
 exports.draw = draw;
-/* element Not a pure module */
+/* context Not a pure module */

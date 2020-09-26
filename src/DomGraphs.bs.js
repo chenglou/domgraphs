@@ -45,8 +45,11 @@ function getTypeOfGraph(param) {
   }
 }
 
+var canvas = document.getElementById("canvas");
+
 exports.getNumericValue = getNumericValue;
 exports.getFunctionValue = getFunctionValue;
 exports.getFormula = getFormula;
 exports.getTypeOfGraph = getTypeOfGraph;
-/* No side effect */
+exports.canvas = canvas;
+/* canvas Not a pure module */

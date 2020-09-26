@@ -46,3 +46,5 @@ let getTypeOfGraph = () => {
     Lissajous
   }
 }
+
+let canvas = document["getElementById"]("canvas")
