@@ -44,6 +44,7 @@ let toCanvas = ({cartesianX: x, cartesianY: y}, ~amplitude) => {
   }
 }
 
+@warning("-21")
 let rec draw = _evt => {
   let formula1 = DomGraphs.getFormula("1")
   let formula2 = DomGraphs.getFormula("2")
