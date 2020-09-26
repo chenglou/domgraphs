@@ -4,19 +4,6 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var DomGraphs$Domgraphs = require("./DomGraphs.bs.js");
 
-function toRadians(degrees) {
-  return degrees * Math.PI / 180.0;
-}
-
-function toCartesian(param) {
-  var theta = param.theta;
-  var r = param.radius;
-  return {
-          cartesianX: r * Math.cos(toRadians(theta)),
-          cartesianY: r * Math.sin(toRadians(theta))
-        };
-}
-
 function gcd(_m, _n) {
   while(true) {
     var n = _n;
@@ -37,25 +24,44 @@ function lcm(m, n) {
   return m * n / gcd(m, n);
 }
 
+var element = document.getElementById("canvas");
+
+var context = element.getContext("2d");
+
+var canvasWidth = element.width;
+
+var canvasHeight = element.height;
+
+var centerX = canvasWidth / 2.0;
+
+var centerY = canvasHeight / 2.0;
+
+function toRadians(degrees) {
+  return degrees * Math.PI / 180.0;
+}
+
+function toCartesian(param) {
+  var theta = param.theta;
+  var r = param.radius;
+  return {
+          cartesianX: r * Math.cos(toRadians(theta)),
+          cartesianY: r * Math.sin(toRadians(theta))
+        };
+}
+
+function toCanvas(param, amplitude) {
+  return {
+          canvasX: centerX / amplitude * param.cartesianX + centerX,
+          canvasY: -centerY / amplitude * param.cartesianY + centerY
+        };
+}
+
 function draw(_evt) {
   var formula1 = DomGraphs$Domgraphs.getFormula("1");
   var formula2 = DomGraphs$Domgraphs.getFormula("2");
-  var plotAs = DomGraphs$Domgraphs.getTypeOfGraph(undefined);
-  var element = document.getElementById("canvas");
-  var context = element.getContext("2d");
-  var width = element.width;
-  var height = element.height;
-  var centerX = width / 2.0;
-  var centerY = height / 2.0;
   context.fillStyle = "white";
-  context.fillRect(0.0, 0.0, width, height);
+  context.fillRect(0.0, 0.0, canvasWidth, canvasHeight);
   var amplitude = Math.max(1.0, Math.abs(formula1.factor) + Math.abs(formula2.factor));
-  var toCanvas = function (param) {
-    return {
-            canvasX: centerX / amplitude * param.cartesianX + centerX,
-            canvasY: -centerY / amplitude * param.cartesianY + centerY
-          };
-  };
   var evaluate = function (f, angle) {
     return f.factor * Curry._1(f.fcn, f.theta * toRadians(angle) + toRadians(f.offset));
   };
@@ -78,20 +84,20 @@ function draw(_evt) {
   context.strokeStyle = "#999";
   context.beginPath();
   context.moveTo(0.0, centerY);
-  context.lineTo(width, centerY);
+  context.lineTo(canvasWidth, centerY);
   context.moveTo(centerX, 0.0);
-  context.lineTo(centerX, height);
+  context.lineTo(centerX, canvasHeight);
   context.closePath();
   context.stroke();
-  var getXY = plotAs === /* Polar */0 ? getPolar : getLissajous;
-  var match = toCanvas(Curry._1(getXY, 0.0));
+  var getXY = DomGraphs$Domgraphs.getTypeOfGraph(undefined) === /* Polar */0 ? getPolar : getLissajous;
+  var match = toCanvas(Curry._1(getXY, 0.0), amplitude);
   context.strokeStyle = "#000";
   context.beginPath();
   context.moveTo(match.canvasX, match.canvasY);
   var d = 3.0;
   var limit = 360.0 * lcm(formula1.theta, formula2.theta);
   while(d < limit) {
-    var match$1 = toCanvas(Curry._1(getXY, d));
+    var match$1 = toCanvas(Curry._1(getXY, d), amplitude);
     context.lineTo(match$1.canvasX, match$1.canvasY);
     d = d + 3.0;
   };
@@ -105,9 +111,16 @@ function draw(_evt) {
 
 draw(undefined);
 
-exports.toRadians = toRadians;
-exports.toCartesian = toCartesian;
 exports.gcd = gcd;
 exports.lcm = lcm;
+exports.element = element;
+exports.context = context;
+exports.canvasWidth = canvasWidth;
+exports.canvasHeight = canvasHeight;
+exports.centerX = centerX;
+exports.centerY = centerY;
+exports.toRadians = toRadians;
+exports.toCartesian = toCartesian;
+exports.toCanvas = toCanvas;
 exports.draw = draw;
-/*  Not a pure module */
+/* element Not a pure module */

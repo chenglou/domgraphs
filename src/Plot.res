@@ -5,17 +5,6 @@ type polar = {radius: float, theta: float}
 type cartesian = {cartesianX: float, cartesianY: float}
 type canvasCoord = {canvasX: float, canvasY: float}
 
-let toRadians = (degrees: float): float => {
-  degrees *. Js.Math._PI /. 180.0
-}
-
-let toCartesian = ({radius: r, theta}) => {
-  {
-    cartesianX: r *. cos(toRadians(theta)),
-    cartesianY: r *. sin(toRadians(theta)),
-  }
-}
-
 let rec gcd = (m, n) => {
   if m === n {
     m
@@ -30,29 +19,40 @@ let lcm = (m, n) => {
   m *. n /. gcd(m, n)
 }
 
+let element = document["getElementById"]("canvas")
+let context = element["getContext"]("2d")
+let canvasWidth = Belt.Float.fromInt(element["width"])
+let canvasHeight = Belt.Float.fromInt(element["height"])
+let centerX = canvasWidth /. 2.0
+let centerY = canvasHeight /. 2.0
+
+let toRadians = (degrees: float) => {
+  degrees *. Js.Math._PI /. 180.0
+}
+let toCartesian = ({radius: r, theta}) => {
+  {
+    cartesianX: r *. cos(toRadians(theta)),
+    cartesianY: r *. sin(toRadians(theta)),
+  }
+}
+let toCanvas = ({cartesianX: x, cartesianY: y}, ~amplitude) => {
+  {
+    canvasX: centerX /. amplitude *. x +. centerX,
+    canvasY: -.centerY /. amplitude *. y +. centerY,
+  }
+}
+
 let rec draw = _evt => {
   let formula1 = DomGraphs.getFormula("1")
   let formula2 = DomGraphs.getFormula("2")
-  let plotAs = DomGraphs.getTypeOfGraph()
-
-  let element = document["getElementById"]("canvas")
-  let context = element["getContext"]("2d")
-  let width = Belt.Float.fromInt(element["width"])
-  let height = Belt.Float.fromInt(element["height"])
-  let centerX = width /. 2.0
-  let centerY = height /. 2.0
 
   context["fillStyle"] = "white"
-  context["fillRect"](~x=0.0, ~y=0.0, ~w=width, ~h=height)
+  context["fillRect"](~x=0.0, ~y=0.0, ~w=canvasWidth, ~h=canvasHeight)
 
-  let amplitude = Js.Math.max_float(1.0, abs_float(formula1.factor) +. abs_float(formula2.factor))
-
-  let toCanvas = ({cartesianX: x, cartesianY: y}) => {
-    {
-      canvasX: centerX /. amplitude *. x +. centerX,
-      canvasY: -.centerY /. amplitude *. y +. centerY,
-    }
-  }
+  let amplitude = Js.Math.max_float(
+    1.0,
+    Js.Math.abs_float(formula1.factor) +. Js.Math.abs_float(formula2.factor),
+  )
 
   let evaluate = (f: DomGraphs.formula, angle) => {
     f.factor *. f.fcn(f.theta *. toRadians(angle) +. toRadians(f.offset))
@@ -74,23 +74,23 @@ let rec draw = _evt => {
   context["strokeStyle"] = "#999"
   context["beginPath"]()
   context["moveTo"](~x=0.0, ~y=centerY)
-  context["lineTo"](~x=width, ~y=centerY)
+  context["lineTo"](~x=canvasWidth, ~y=centerY)
   context["moveTo"](~x=centerX, ~y=0.0)
-  context["lineTo"](~x=centerX, ~y=height)
+  context["lineTo"](~x=centerX, ~y=canvasHeight)
   context["closePath"]()
   context["stroke"]()
 
   // draw the plot lines
-  let getXY = plotAs == Polar ? getPolar : getLissajous
+  let getXY = DomGraphs.getTypeOfGraph() == Polar ? getPolar : getLissajous
   let increment = 3.0
-  let {canvasX, canvasY} = toCanvas(getXY(0.0))
+  let {canvasX, canvasY} = toCanvas(getXY(0.0), ~amplitude)
   context["strokeStyle"] = "#000"
   context["beginPath"]()
   context["moveTo"](canvasX, canvasY)
   let d = ref(increment)
   let limit = 360.0 *. lcm(formula1.theta, formula2.theta)
   while d.contents < limit {
-    let {canvasX, canvasY} = toCanvas(getXY(d.contents))
+    let {canvasX, canvasY} = toCanvas(getXY(d.contents), ~amplitude)
     context["lineTo"](canvasX, canvasY)
     d.contents = d.contents +. increment
   }
