@@ -64,28 +64,6 @@ let plot = (
     (r1, r2)
   }
 
-  let drawLines = (getXY: float => cartesian): unit => {
-    let increment = 3.0
-    let limit = 360.0 *. lcm(formula1.theta, formula2.theta)
-    let rec helper = (d: float) => {
-      if d >= limit {
-        ()
-      } else {
-        let (x, y) = toCanvas(getXY(d))
-        context["lineTo"](~x, ~y)
-        helper(d +. increment)
-      }
-    }
-    let (x, y) = toCanvas(getXY(0.0))
-    context["strokeStyle"] = "#000"
-    context["beginPath"]()
-    context["moveTo"](~x, ~y)
-    helper(increment)
-    context["closePath"]()
-    context["stroke"]()
-    ()
-  }
-
   // draw axes
   context["strokeStyle"] = "#999"
   context["beginPath"]()
@@ -97,7 +75,24 @@ let plot = (
   context["stroke"]()
 
   // draw the plot lines
-  drawLines(plotAs == Polar ? getPolar : getLissajous)
+  let getXY = plotAs == Polar ? getPolar : getLissajous
+  let increment = 3.0
+  let limit = 360.0 *. lcm(formula1.theta, formula2.theta)
+  let rec helper = d => {
+    if d < limit {
+      let (x, y) = toCanvas(getXY(d))
+      context["lineTo"](~x, ~y)
+      helper(d +. increment)
+    }
+  }
+  let (x, y) = toCanvas(getXY(0.0))
+  context["strokeStyle"] = "#000"
+  context["beginPath"]()
+  context["moveTo"](~x, ~y)
+  helper(increment)
+  context["closePath"]()
+  context["stroke"]()
+  ()
 }
 
 let rec draw = _evt => {
