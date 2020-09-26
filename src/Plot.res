@@ -82,10 +82,11 @@ let rec draw = _evt => {
 
   // draw the plot lines
   let getXY = DomGraphs.getTypeOfGraph() == Polar ? getPolar : getLissajous
-  let increment = 3.0
-  let {canvasX, canvasY} = toCanvas(getXY(0.0), ~amplitude)
+  let increment = 1.0
   context["strokeStyle"] = "#000"
+  context["lineWidth"] = 0.5
   context["beginPath"]()
+  let {canvasX, canvasY} = toCanvas(getXY(0.0), ~amplitude)
   context["moveTo"](canvasX, canvasY)
   let d = ref(increment)
   let limit = 360.0 *. lcm(formula1.theta, formula2.theta)

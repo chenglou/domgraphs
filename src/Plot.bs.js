@@ -90,16 +90,17 @@ function draw(_evt) {
   context.closePath();
   context.stroke();
   var getXY = DomGraphs$Domgraphs.getTypeOfGraph(undefined) === /* Polar */0 ? getPolar : getLissajous;
-  var match = toCanvas(Curry._1(getXY, 0.0), amplitude);
   context.strokeStyle = "#000";
+  context.lineWidth = 0.5;
   context.beginPath();
+  var match = toCanvas(Curry._1(getXY, 0.0), amplitude);
   context.moveTo(match.canvasX, match.canvasY);
-  var d = 3.0;
+  var d = 1.0;
   var limit = 360.0 * lcm(formula1.theta, formula2.theta);
   while(d < limit) {
     var match$1 = toCanvas(Curry._1(getXY, d), amplitude);
     context.lineTo(match$1.canvasX, match$1.canvasY);
-    d = d + 3.0;
+    d = d + 1.0;
   };
   context.closePath();
   context.stroke();
