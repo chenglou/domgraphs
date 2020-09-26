@@ -5,6 +5,7 @@ type polar = {radius: float, theta: float}
 type cartesian = {cartesianX: float, cartesianY: float}
 type canvasCoord = {canvasX: float, canvasY: float}
 
+// greatest common denominator
 let rec gcd = (m, n) => {
   if m === n {
     m
@@ -15,6 +16,7 @@ let rec gcd = (m, n) => {
   }
 }
 
+// least common multiple
 let lcm = (m, n) => {
   m *. n /. gcd(m, n)
 }
@@ -26,7 +28,7 @@ let canvasHeight = Belt.Float.fromInt(element["height"])
 let centerX = canvasWidth /. 2.0
 let centerY = canvasHeight /. 2.0
 
-let toRadians = (degrees: float) => {
+let toRadians = degrees => {
   degrees *. Js.Math._PI /. 180.0
 }
 let toCartesian = ({radius: r, theta}) => {
@@ -45,9 +47,6 @@ let toCanvas = ({cartesianX: x, cartesianY: y}, ~amplitude) => {
 let rec draw = _evt => {
   let formula1 = DomGraphs.getFormula("1")
   let formula2 = DomGraphs.getFormula("2")
-
-  context["fillStyle"] = "white"
-  context["fillRect"](~x=0.0, ~y=0.0, ~w=canvasWidth, ~h=canvasHeight)
 
   let amplitude = Js.Math.max_float(
     1.0,
@@ -69,6 +68,10 @@ let rec draw = _evt => {
     let r2 = evaluate(formula2, theta)
     {cartesianX: r1, cartesianY: r2}
   }
+
+  // wipe screen
+  context["fillStyle"] = "white"
+  context["fillRect"](~x=0.0, ~y=0.0, ~w=canvasWidth, ~h=canvasHeight)
 
   // draw axes
   context["strokeStyle"] = "#999"

@@ -3,27 +3,6 @@
 
 var Belt_Float = require("bs-platform/lib/js/belt_Float.js");
 
-var userInfo = {
-  contents: [
-    {
-      factor: 1.0,
-      fcn: (function (prim) {
-          return Math.sin(prim);
-        }),
-      theta: 1.0,
-      offset: 0.0
-    },
-    {
-      factor: 1.0,
-      fcn: (function (prim) {
-          return Math.sin(prim);
-        }),
-      theta: 1.0,
-      offset: 0.0
-    }
-  ]
-};
-
 function getNumericValue(domId, $$default) {
   var stringValue = document.getElementById(domId).value;
   if (stringValue === "") {
@@ -66,7 +45,6 @@ function getTypeOfGraph(param) {
   }
 }
 
-exports.userInfo = userInfo;
 exports.getNumericValue = getNumericValue;
 exports.getFunctionValue = getFunctionValue;
 exports.getFormula = getFormula;

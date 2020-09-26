@@ -11,11 +11,6 @@ type graphType =
   | Polar
   | Lissajous
 
-let userInfo = ref((
-  {factor: 1.0, fcn: sin, theta: 1.0, offset: 0.0},
-  {factor: 1.0, fcn: sin, theta: 1.0, offset: 0.0},
-))
-
 let getNumericValue = (domId, default) => {
   switch document["getElementById"](domId)["value"] {
   | "" => default
@@ -27,7 +22,7 @@ let getNumericValue = (domId, default) => {
   }
 }
 
-let getFunctionValue = (domId) => {
+let getFunctionValue = domId => {
   if document["getElementById"](domId)["value"] === "sin" {
     sin
   } else {
@@ -35,7 +30,7 @@ let getFunctionValue = (domId) => {
   }
 }
 
-let getFormula = (suffix) => {
+let getFormula = suffix => {
   {
     factor: getNumericValue("factor" ++ suffix, 1.0),
     fcn: getFunctionValue("fcn" ++ suffix),

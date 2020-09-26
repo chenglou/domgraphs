@@ -59,8 +59,6 @@ function toCanvas(param, amplitude) {
 function draw(_evt) {
   var formula1 = DomGraphs$Domgraphs.getFormula("1");
   var formula2 = DomGraphs$Domgraphs.getFormula("2");
-  context.fillStyle = "white";
-  context.fillRect(0.0, 0.0, canvasWidth, canvasHeight);
   var amplitude = Math.max(1.0, Math.abs(formula1.factor) + Math.abs(formula2.factor));
   var evaluate = function (f, angle) {
     return f.factor * Curry._1(f.fcn, f.theta * toRadians(angle) + toRadians(f.offset));
@@ -81,6 +79,8 @@ function draw(_evt) {
             cartesianY: r2
           };
   };
+  context.fillStyle = "white";
+  context.fillRect(0.0, 0.0, canvasWidth, canvasHeight);
   context.strokeStyle = "#999";
   context.beginPath();
   context.moveTo(0.0, centerY);
