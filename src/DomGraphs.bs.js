@@ -2,7 +2,6 @@
 'use strict';
 
 var Curry = require("bs-platform/lib/js/curry.js");
-var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Caml_format = require("bs-platform/lib/js/caml_format.js");
 var Caml_js_exceptions = require("bs-platform/lib/js/caml_js_exceptions.js");
 
@@ -156,24 +155,12 @@ function getFormula(suffix) {
               }));
 }
 
-function getRadioValue(radioButtons, $$default) {
-  var _index = 0;
-  while(true) {
-    var index = _index;
-    if (index === radioButtons.length) {
-      return $$default;
-    }
-    var element = document.getElementById(Caml_array.caml_array_get(radioButtons, index)[0]);
-    if (element == null) {
-      _index = index + 1 | 0;
-      continue ;
-    }
-    if (element.checked) {
-      return Caml_array.caml_array_get(radioButtons, index)[1];
-    }
-    _index = index + 1 | 0;
-    continue ;
-  };
+function getTypeOfGraph(param) {
+  if (document.getElementById("polar").checked) {
+    return /* Polar */0;
+  } else {
+    return /* Lissajous */1;
+  }
 }
 
 var DOM;
@@ -203,5 +190,5 @@ exports.getNumericValue = getNumericValue;
 exports.getFunctionValue = getFunctionValue;
 exports.multiMap = multiMap;
 exports.getFormula = getFormula;
-exports.getRadioValue = getRadioValue;
+exports.getTypeOfGraph = getTypeOfGraph;
 /* No side effect */

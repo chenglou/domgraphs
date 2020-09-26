@@ -117,16 +117,7 @@ function plot(formula1, formula2, plotAs) {
 function draw(_evt) {
   var formula1 = DomGraphs$Domgraphs.getFormula("1");
   var formula2 = DomGraphs$Domgraphs.getFormula("2");
-  var plotAs = DomGraphs$Domgraphs.getRadioValue([
-        [
-          "polar",
-          /* Polar */0
-        ],
-        [
-          "lissajous",
-          /* Lissajous */1
-        ]
-      ], /* Polar */0);
+  var plotAs = DomGraphs$Domgraphs.getTypeOfGraph(undefined);
   if (formula1.TAG) {
     window.alert(formula1._0);
     return ;

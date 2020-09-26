@@ -120,10 +120,7 @@ let plot = (
 let draw = _evt => {
   let formula1 = DomGraphs.getFormula("1")
   let formula2 = DomGraphs.getFormula("2")
-  let plotAs = DomGraphs.getRadioValue(
-    [("polar", DomGraphs.Polar), ("lissajous", DomGraphs.Lissajous)],
-    DomGraphs.Polar,
-  )
+  let plotAs = DomGraphs.getTypeOfGraph()
   switch (formula1, formula2) {
   | (Belt.Result.Ok(f1), Belt.Result.Ok(f2)) => {
       Js.log2("formula 1:", f1)

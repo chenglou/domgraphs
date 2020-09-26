@@ -6,6 +6,10 @@ module InputElem = Webapi.Dom.HtmlInputElement
 module EvtTarget = Webapi.Dom.EventTarget
 module Result = Belt.Result
 
+// ================= refactor bindings
+@bs.val external document: {..} = "document"
+// ================= end
+
 type trigFcn = float => float
 
 type formula = {
@@ -109,23 +113,10 @@ let getFormula = (suffix: string): Result.t<formula, string> => {
   })
 }
 
-let getRadioValue = (radioButtons: array<(string, 'a)>, default: 'a) => {
-  let rec helper = (index: int) => {
-    if index == Belt.Array.length(radioButtons) {
-      default
-    } else {
-      switch Doc.getElementById(fst(radioButtons[index]), DOM.document) {
-      | Some(element) => {
-          let input = unsafeAsHtmlInputElement(element)
-          if InputElem.checked(input) {
-            snd(radioButtons[index])
-          } else {
-            helper(index + 1)
-          }
-        }
-      | None => helper(index + 1)
-      }
-    }
+let getTypeOfGraph = () => {
+  if document["getElementById"]("polar")["checked"] {
+    Polar
+  } else {
+    Lissajous
   }
-  helper(0)
 }
