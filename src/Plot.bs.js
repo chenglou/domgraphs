@@ -37,7 +37,10 @@ function lcm(m, n) {
   return m * n / gcd(m, n);
 }
 
-function plot(formula1, formula2, plotAs) {
+function draw(_evt) {
+  var formula1 = DomGraphs$Domgraphs.getFormula("1");
+  var formula2 = DomGraphs$Domgraphs.getFormula("2");
+  var plotAs = DomGraphs$Domgraphs.getTypeOfGraph(undefined);
   var element = document.getElementById("canvas");
   var context = element.getContext("2d");
   var width = element.width;
@@ -81,34 +84,19 @@ function plot(formula1, formula2, plotAs) {
   context.closePath();
   context.stroke();
   var getXY = plotAs === /* Polar */0 ? getPolar : getLissajous;
-  var limit = 360.0 * lcm(formula1.theta, formula2.theta);
-  var helper = function (_d) {
-    while(true) {
-      var d = _d;
-      if (d >= limit) {
-        return ;
-      }
-      var match = toCanvas(Curry._1(getXY, d));
-      context.lineTo(match[0], match[1]);
-      _d = d + 3.0;
-      continue ;
-    };
-  };
   var match = toCanvas(Curry._1(getXY, 0.0));
   context.strokeStyle = "#000";
   context.beginPath();
   context.moveTo(match[0], match[1]);
-  helper(3.0);
+  var d = 3.0;
+  var limit = 360.0 * lcm(formula1.theta, formula2.theta);
+  while(d < limit) {
+    var match$1 = toCanvas(Curry._1(getXY, d));
+    context.lineTo(match$1[0], match$1[1]);
+    d = d + 3.0;
+  };
   context.closePath();
   context.stroke();
-  
-}
-
-function draw(_evt) {
-  var formula1 = DomGraphs$Domgraphs.getFormula("1");
-  var formula2 = DomGraphs$Domgraphs.getFormula("2");
-  var plotAs = DomGraphs$Domgraphs.getTypeOfGraph(undefined);
-  plot(formula1, formula2, plotAs);
   requestAnimationFrame(function (param) {
         return draw(undefined);
       });
@@ -121,6 +109,5 @@ exports.toRadians = toRadians;
 exports.toCartesian = toCartesian;
 exports.gcd = gcd;
 exports.lcm = lcm;
-exports.plot = plot;
 exports.draw = draw;
 /*  Not a pure module */

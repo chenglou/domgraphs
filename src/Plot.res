@@ -27,11 +27,11 @@ let lcm = (m, n) => {
   m *. n /. gcd(m, n)
 }
 
-let plot = (
-  formula1: DomGraphs.formula,
-  formula2: DomGraphs.formula,
-  plotAs: DomGraphs.graphType,
-): unit => {
+let rec draw = _evt => {
+  let formula1 = DomGraphs.getFormula("1")
+  let formula2 = DomGraphs.getFormula("2")
+  let plotAs = DomGraphs.getTypeOfGraph()
+
   let element = document["getElementById"]("canvas")
   let context = element["getContext"]("2d")
   let width = Belt.Float.fromInt(element["width"])
@@ -48,7 +48,7 @@ let plot = (
     (centerX /. amplitude *. x +. centerX, -.centerY /. amplitude *. y +. centerY)
   }
 
-  let evaluate = (f: DomGraphs.formula, angle: float): float => {
+  let evaluate = (f: DomGraphs.formula, angle) => {
     f.factor *. f.fcn(f.theta *. toRadians(angle) +. toRadians(f.offset))
   }
 
@@ -77,29 +77,19 @@ let plot = (
   // draw the plot lines
   let getXY = plotAs == Polar ? getPolar : getLissajous
   let increment = 3.0
-  let limit = 360.0 *. lcm(formula1.theta, formula2.theta)
-  let rec helper = d => {
-    if d < limit {
-      let (x, y) = toCanvas(getXY(d))
-      context["lineTo"](~x, ~y)
-      helper(d +. increment)
-    }
-  }
   let (x, y) = toCanvas(getXY(0.0))
   context["strokeStyle"] = "#000"
   context["beginPath"]()
   context["moveTo"](~x, ~y)
-  helper(increment)
+  let d = ref(increment)
+  let limit = 360.0 *. lcm(formula1.theta, formula2.theta)
+  while d.contents < limit {
+    let (x, y) = toCanvas(getXY(d.contents))
+    context["lineTo"](~x, ~y)
+    d.contents = d.contents +. increment
+  }
   context["closePath"]()
   context["stroke"]()
-  ()
-}
-
-let rec draw = _evt => {
-  let formula1 = DomGraphs.getFormula("1")
-  let formula2 = DomGraphs.getFormula("2")
-  let plotAs = DomGraphs.getTypeOfGraph()
-  plot(formula1, formula2, plotAs)
 
   requestAnimationFrame(() => {
     draw()
