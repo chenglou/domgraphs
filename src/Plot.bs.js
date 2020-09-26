@@ -9,12 +9,12 @@ function toRadians(degrees) {
 }
 
 function toCartesian(param) {
-  var theta = param[1];
-  var r = param[0];
-  return [
-          r * Math.cos(toRadians(theta)),
-          r * Math.sin(toRadians(theta))
-        ];
+  var theta = param.theta;
+  var r = param.radius;
+  return {
+          cartesianX: r * Math.cos(toRadians(theta)),
+          cartesianY: r * Math.sin(toRadians(theta))
+        };
 }
 
 function gcd(_m, _n) {
@@ -51,10 +51,10 @@ function draw(_evt) {
   context.fillRect(0.0, 0.0, width, height);
   var amplitude = Math.max(1.0, Math.abs(formula1.factor) + Math.abs(formula2.factor));
   var toCanvas = function (param) {
-    return [
-            centerX / amplitude * param[0] + centerX,
-            -centerY / amplitude * param[1] + centerY
-          ];
+    return {
+            canvasX: centerX / amplitude * param.cartesianX + centerX,
+            canvasY: -centerY / amplitude * param.cartesianY + centerY
+          };
   };
   var evaluate = function (f, angle) {
     return f.factor * Curry._1(f.fcn, f.theta * toRadians(angle) + toRadians(f.offset));
@@ -62,18 +62,18 @@ function draw(_evt) {
   var getPolar = function (theta) {
     var r1 = evaluate(formula1, theta);
     var r2 = evaluate(formula2, theta);
-    return toCartesian([
-                r1 + r2,
-                theta
-              ]);
+    return toCartesian({
+                radius: r1 + r2,
+                theta: theta
+              });
   };
   var getLissajous = function (theta) {
     var r1 = evaluate(formula1, theta);
     var r2 = evaluate(formula2, theta);
-    return [
-            r1,
-            r2
-          ];
+    return {
+            cartesianX: r1,
+            cartesianY: r2
+          };
   };
   context.strokeStyle = "#999";
   context.beginPath();
@@ -87,12 +87,12 @@ function draw(_evt) {
   var match = toCanvas(Curry._1(getXY, 0.0));
   context.strokeStyle = "#000";
   context.beginPath();
-  context.moveTo(match[0], match[1]);
+  context.moveTo(match.canvasX, match.canvasY);
   var d = 3.0;
   var limit = 360.0 * lcm(formula1.theta, formula2.theta);
   while(d < limit) {
     var match$1 = toCanvas(Curry._1(getXY, d));
-    context.lineTo(match$1[0], match$1[1]);
+    context.lineTo(match$1.canvasX, match$1.canvasY);
     d = d + 3.0;
   };
   context.closePath();

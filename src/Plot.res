@@ -1,16 +1,19 @@
 @bs.val external requestAnimationFrame: ('a => unit) => unit = "requestAnimationFrame"
 @bs.val external document: {..} = "document"
 
-type polar = (float, float) // (radius, theta)
-type cartesian = (float, float) // (0.0, 0.0) is at center
-type canvasCoord = (float, float) // (0.0, 0.0) is at top left
+type polar = {radius: float, theta: float}
+type cartesian = {cartesianX: float, cartesianY: float}
+type canvasCoord = {canvasX: float, canvasY: float}
 
 let toRadians = (degrees: float): float => {
   degrees *. Js.Math._PI /. 180.0
 }
 
-let toCartesian = ((r, theta): polar): cartesian => {
-  (r *. cos(toRadians(theta)), r *. sin(toRadians(theta)))
+let toCartesian = ({radius: r, theta}) => {
+  {
+    cartesianX: r *. cos(toRadians(theta)),
+    cartesianY: r *. sin(toRadians(theta)),
+  }
 }
 
 let rec gcd = (m, n) => {
@@ -44,24 +47,27 @@ let rec draw = _evt => {
 
   let amplitude = Js.Math.max_float(1.0, abs_float(formula1.factor) +. abs_float(formula2.factor))
 
-  let toCanvas = ((x, y): cartesian): cartesian => {
-    (centerX /. amplitude *. x +. centerX, -.centerY /. amplitude *. y +. centerY)
+  let toCanvas = ({cartesianX: x, cartesianY: y}) => {
+    {
+      canvasX: centerX /. amplitude *. x +. centerX,
+      canvasY: -.centerY /. amplitude *. y +. centerY,
+    }
   }
 
   let evaluate = (f: DomGraphs.formula, angle) => {
     f.factor *. f.fcn(f.theta *. toRadians(angle) +. toRadians(f.offset))
   }
 
-  let getPolar = (theta): cartesian => {
+  let getPolar = theta => {
     let r1 = evaluate(formula1, theta)
     let r2 = evaluate(formula2, theta)
-    toCartesian((r1 +. r2, theta))
+    toCartesian({radius: r1 +. r2, theta: theta})
   }
 
-  let getLissajous = (theta): cartesian => {
+  let getLissajous = theta => {
     let r1 = evaluate(formula1, theta)
     let r2 = evaluate(formula2, theta)
-    (r1, r2)
+    {cartesianX: r1, cartesianY: r2}
   }
 
   // draw axes
@@ -77,15 +83,15 @@ let rec draw = _evt => {
   // draw the plot lines
   let getXY = plotAs == Polar ? getPolar : getLissajous
   let increment = 3.0
-  let (x, y) = toCanvas(getXY(0.0))
+  let {canvasX, canvasY} = toCanvas(getXY(0.0))
   context["strokeStyle"] = "#000"
   context["beginPath"]()
-  context["moveTo"](~x, ~y)
+  context["moveTo"](canvasX, canvasY)
   let d = ref(increment)
   let limit = 360.0 *. lcm(formula1.theta, formula2.theta)
   while d.contents < limit {
-    let (x, y) = toCanvas(getXY(d.contents))
-    context["lineTo"](~x, ~y)
+    let {canvasX, canvasY} = toCanvas(getXY(d.contents))
+    context["lineTo"](canvasX, canvasY)
     d.contents = d.contents +. increment
   }
   context["closePath"]()
