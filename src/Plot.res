@@ -42,8 +42,8 @@ let plot = (
 ): unit => {
   let element = document["getElementById"]("canvas")
   let context = CanvasElement.getContext2d(element)
-  let width = float_of_int(CanvasElement.width(element))
-  let height = float_of_int(CanvasElement.height(element))
+  let width = Belt.Float.fromInt(CanvasElement.width(element))
+  let height = Belt.Float.fromInt(CanvasElement.height(element))
   let centerX = width /. 2.0
   let centerY = height /. 2.0
 
