@@ -3,7 +3,6 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
-var Caml_option = require("bs-platform/lib/js/caml_option.js");
 var DomGraphs$Domgraphs = require("./DomGraphs.bs.js");
 var Webapi__Canvas__Canvas2d = require("bs-webapi/src/Webapi/Canvas/Webapi__Canvas__Canvas2d.js");
 
@@ -120,27 +119,18 @@ function draw(_evt) {
   var plotAs = DomGraphs$Domgraphs.getTypeOfGraph(undefined);
   if (formula1.TAG) {
     window.alert(formula1._0);
-    return ;
-  }
-  var f1 = formula1._0;
-  if (formula2.TAG) {
+  } else if (formula2.TAG) {
     window.alert(formula2._0);
-    return ;
+  } else {
+    plot(formula1._0, formula2._0, plotAs);
   }
-  var f2 = formula2._0;
-  console.log("formula 1:", f1);
-  console.log("formula 2:", f2);
-  console.log("plot as: ", plotAs);
-  return plot(f1, f2, plotAs);
+  requestAnimationFrame(function (param) {
+        return draw(undefined);
+      });
+  
 }
 
-var optButton = document.getElementById("draw");
-
-if (optButton == null) {
-  window.alert("Cannot find button");
-} else {
-  optButton.addEventListener("click", draw);
-}
+draw(undefined);
 
 var DOM;
 
@@ -156,8 +146,6 @@ var CanvasElement;
 
 var C2d;
 
-var optButton$1 = (optButton == null) ? undefined : Caml_option.some(optButton);
-
 exports.DOM = DOM;
 exports.Doc = Doc;
 exports.Elem = Elem;
@@ -172,5 +160,4 @@ exports.lcm = lcm;
 exports.lcm_float = lcm_float;
 exports.plot = plot;
 exports.draw = draw;
-exports.optButton = optButton$1;
-/* optButton Not a pure module */
+/*  Not a pure module */
