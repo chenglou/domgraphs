@@ -122,16 +122,7 @@ let rec draw = _evt => {
   let formula1 = DomGraphs.getFormula("1")
   let formula2 = DomGraphs.getFormula("2")
   let plotAs = DomGraphs.getTypeOfGraph()
-  switch (formula1, formula2) {
-  | (Belt.Result.Ok(f1), Belt.Result.Ok(f2)) => {
-      // Js.log2("formula 1:", f1)
-      // Js.log2("formula 2:", f2)
-      // Js.log2("plot as: ", plotAs)
-      plot(f1, f2, plotAs)
-    }
-  | (Belt.Result.Error(e1), _) => DOM.Window.alert(e1, DOM.window)
-  | (_, Belt.Result.Error(e2)) => DOM.Window.alert(e2, DOM.window)
-  }
+  plot(formula1, formula2, plotAs)
 
   requestAnimationFrame(() => {
     draw()

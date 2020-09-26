@@ -117,13 +117,7 @@ function draw(_evt) {
   var formula1 = DomGraphs$Domgraphs.getFormula("1");
   var formula2 = DomGraphs$Domgraphs.getFormula("2");
   var plotAs = DomGraphs$Domgraphs.getTypeOfGraph(undefined);
-  if (formula1.TAG) {
-    window.alert(formula1._0);
-  } else if (formula2.TAG) {
-    window.alert(formula2._0);
-  } else {
-    plot(formula1._0, formula2._0, plotAs);
-  }
+  plot(formula1, formula2, plotAs);
   requestAnimationFrame(function (param) {
         return draw(undefined);
       });
